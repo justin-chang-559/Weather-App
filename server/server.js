@@ -17,7 +17,7 @@ app.get('/weather', async (req, res) => {
   try {
     // Replace 'Hawaii' with the city name you want to fetch weather data for
     const city = 'Clovis';
-    const fullUrl = `${apiUrl}?q=${city}&appid=${API_KEY}`;
+    const fullUrl = `${apiUrl}?q=${city}&appid=${API_KEY}&units=imperial`;
     console.log(fullUrl)
     const response = await fetch(fullUrl);
     if (!response.ok) {
@@ -27,6 +27,23 @@ app.get('/weather', async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error('Error handling weather data request:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/weather/:cityname', async (req, res) => {
+  try {
+    const city = req.params.cityname;
+    const fullUrl = `${apiUrl}?q=${city}&appid=${API_KEY}&units=imperial`;
+    console.log(fullUrl)
+    const response = await fetch(fullUrl);
+    if (!response.ok) {
+      throw new Error('Error fetching weather data from OpenWeatherMap');
+    }
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Failed to grab cities weatber', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
